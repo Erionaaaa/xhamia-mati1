@@ -51,7 +51,7 @@ async function main() {
       {
         title: "Rëndësia e namazit në jetën e përditshme",
         slug: "rendesia-e-namazit",
-        youtubeUrl: "https://www.youtube.com/watch?v=I7L1qk9vZ7k",
+        youtubeUrl: "https://www.youtube.com/watch?v=-vVMEinu9v4",
         description:
           "Ligjëratë motivuese rreth namazit dhe ndikimit të tij në moral dhe disiplinë.",
         categoryId: ligjerata.id,
@@ -61,7 +61,7 @@ async function main() {
       {
         title: "Rinia dhe përgjegjësia në Islam",
         slug: "rinia-dhe-pergjegjesia",
-        youtubeUrl: "https://www.youtube.com/watch?v=2O8P7a6aA-s",
+        youtubeUrl: "https://www.youtube.com/watch?v=6nH0Vn_6P3U",
         description:
           "Mesazh i veçantë për të rinjtë: si ta shfrytëzojnë kohën dhe energjinë në mënyrë të dobishme.",
         categoryId: ligjerata.id,
@@ -71,7 +71,7 @@ async function main() {
       {
         title: "Dashuria ndaj Kur’anit në familje",
         slug: "dashuria-ndaj-kuranit-ne-familje",
-        youtubeUrl: "https://www.youtube.com/watch?v=3CClOsC26Lw",
+        youtubeUrl: "https://www.youtube.com/watch?v=WL6SZmkMBVE",
         description:
           "Si të krijojmë atmosferë familjare rreth leximit dhe kuptimit të Kur’anit.",
         categoryId: ligjerata.id,

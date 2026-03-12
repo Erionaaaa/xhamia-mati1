@@ -96,6 +96,75 @@ export default async function AcademyPage() {
               </MotionCard>
             </div>
           </div>
+
+          <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
+            <MotionCard className="rounded-3xl border border-border/70 bg-background p-6 shadow-sm">
+              <div className="text-sm font-semibold">Pyetje të shpeshta (FAQ)</div>
+              <div className="mt-4 grid gap-4 text-sm">
+                <div className="rounded-2xl border border-border/70 bg-background p-4">
+                  <div className="font-semibold">Si bëhet regjistrimi?</div>
+                  <div className="mt-1 text-muted-foreground">
+                    Regjistrimi mund të bëhet përmes kontaktit të xhamisë. Në fazën
+                    tjetër mund ta shtojmë edhe regjistrimin online.
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-border/70 bg-background p-4">
+                  <div className="font-semibold">A ka grupe sipas moshës?</div>
+                  <div className="mt-1 text-muted-foreground">
+                    Po. Fëmijët, rinia dhe të rriturit mund të ndahen në grupe
+                    sipas nivelit dhe moshës.
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-border/70 bg-background p-4">
+                  <div className="font-semibold">Çfarë tematika trajtohen?</div>
+                  <div className="mt-1 text-muted-foreground">
+                    Kur’an, akide, ahlak, fik’h praktik dhe tema edukative për
+                    jetën e përditshme.
+                  </div>
+                </div>
+              </div>
+            </MotionCard>
+
+            <MotionCard className="rounded-3xl border border-border/70 bg-muted p-6 shadow-sm">
+              <div className="text-sm font-semibold">Dëshiron të regjistrohesh?</div>
+              <div className="mt-2 text-sm leading-6 text-muted-foreground">
+                Na kontakto për informata rreth orareve, niveleve dhe kushteve.
+              </div>
+              <form
+                className="mt-4 grid gap-3"
+                method="POST"
+                action="/api/contact"
+              >
+                <input
+                  className="h-10 rounded-2xl border border-border/70 bg-background px-3 text-xs outline-none ring-0 transition focus:border-foreground/40"
+                  name="name"
+                  placeholder="Emri i nxënësit / pjesëmarrësit"
+                />
+                <input
+                  className="h-10 rounded-2xl border border-border/70 bg-background px-3 text-xs outline-none ring-0 transition focus:border-foreground/40"
+                  name="email"
+                  type="email"
+                  placeholder="Email i prindit ose kontaktit"
+                />
+                <textarea
+                  className="min-h-[80px] rounded-2xl border border-border/70 bg-background px-3 py-2 text-xs outline-none ring-0 transition focus:border-foreground/40"
+                  name="message"
+                  placeholder="Programi i interesuar (p.sh. Fëmijë / Rini / Të rritur) dhe ndonjë shënim shtesë."
+                />
+                <input type="hidden" name="context" value="regjistrim-akademi" />
+                <button
+                  type="submit"
+                  className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
+                >
+                  Dërgo kërkesën për regjistrim
+                </button>
+                <div className="text-[11px] text-muted-foreground">
+                  Kërkesa dërgohet në emailin e kontaktit të xhamisë. Mund t’i
+                  ndryshosh adresën/numrin në `.env`.
+                </div>
+              </form>
+            </MotionCard>
+          </div>
         </Container>
       </MotionSection>
     </main>

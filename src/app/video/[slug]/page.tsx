@@ -22,9 +22,9 @@ function coverFor(slug: string) {
 export default async function VideoCategoryPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const category = await prisma.videoCategory.findUnique({
     where: { slug },
   });

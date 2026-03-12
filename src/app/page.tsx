@@ -8,6 +8,7 @@ import {
   type PrayerTimes,
 } from "@/lib/prayer-times";
 import { getYouTubeId } from "@/lib/youtube";
+import { NextPrayerCountdown } from "@/components/site/NextPrayerCountdown";
 
 export default async function Home() {
   const info = await prisma.mosqueInfo.findFirst();
@@ -29,6 +30,8 @@ export default async function Home() {
     include: { category: true },
   });
 
+  const next = getNextPrayer(prayer.timings);
+
   return (
     <main>
       <Hero
@@ -36,6 +39,7 @@ export default async function Home() {
         infoCity={info?.city}
         infoDescription={info?.description}
         prayer={prayer}
+        next={next}
       />
       <Sections />
       <Quotes />
@@ -55,11 +59,13 @@ function Hero({
   infoCity,
   infoDescription,
   prayer,
+  next,
 }: {
   infoName?: string | null;
   infoCity?: string | null;
   infoDescription?: string | null;
   prayer: PrayerTimes;
+  next: { label: string; iso: string } | null;
 }) {
   return (
     <MotionSection className="relative overflow-hidden border-b border-border/60">
@@ -92,6 +98,12 @@ function Hero({
             {infoDescription ??
               "Orari i namazit në kohë reale, ligjërata, Akademia, aktivitetet dhe mundësitë për të ndihmuar xhaminë."}
           </p>
+          <div className="pt-1">
+            <NextPrayerCountdown
+              label={next?.label ?? "Namazi i radhës"}
+              targetIso={next?.iso ?? null}
+            />
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -176,7 +188,7 @@ function PrayerCard({
 
 function HeroThumb({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative h-28 flex-1 overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+    <MotionCard className="relative h-36 flex-1 overflow-hidden rounded-2xl border border-white/15 bg-black/40 shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
       <Image
         src={src}
         alt={alt}
@@ -184,7 +196,7 @@ function HeroThumb({ src, alt }: { src: string; alt: string }) {
         className="object-cover transition duration-700 hover:scale-[1.04]"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-    </div>
+    </MotionCard>
   );
 }
 
@@ -248,10 +260,46 @@ const QUOTES = [
     ref: "Gafir 40:60",
   },
   {
+    kind: "Ajet",
+    ar: "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+    sq: "“Me vështirësinë vjen lehtësimi.”",
+    ref: "Esh‑Sherh 94:6",
+  },
+  {
+    kind: "Ajet",
+    ar: "فَٱذْكُرُونِيٓ أَذْكُرْكُمْ",
+    sq: "“Më përkujtoni Mua, Unë do t’ju përkujtoj.”",
+    ref: "El‑Bekare 2:152",
+  },
+  {
+    kind: "Ajet",
+    ar: "وَمَا تَوْفِيقِيٓ إِلَّا بِٱللَّهِ",
+    sq: "“Suksesi im është vetëm me Allahun.”",
+    ref: "Hud 11:88",
+  },
+  {
+    kind: "Ajet",
+    ar: "وَٱصْبِرْ وَمَا صَبْرُكَ إِلَّا بِٱللَّهِ",
+    sq: "“Bëhu i durueshëm, e durimi yt është vetëm me Allahun.”",
+    ref: "En‑Nahl 16:127",
+  },
+  {
     kind: "Hadith",
     ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ",
     sq: "“Më i miri prej njerëzve është ai që u sjell më shumë dobi njerëzve.”",
     ref: "Hadith (i njohur)",
+  },
+  {
+    kind: "Hadith",
+    ar: "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
+    sq: "“Veprat vlejnë sipas qëllimeve.”",
+    ref: "Buhari & Muslim",
+  },
+  {
+    kind: "Hadith",
+    ar: "الدِّينُ النَّصِيحَةُ",
+    sq: "“Feja është këshillë (sinqeritet).”",
+    ref: "Muslim (përmbledhje)",
   },
 ];
 
@@ -277,9 +325,9 @@ function Quotes() {
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {QUOTES.map((q) => (
+          {QUOTES.map((q, idx) => (
             <MotionCard
-              key={q.ref}
+              key={`${q.ref}-${idx}`}
               className="rounded-3xl border border-border/70 bg-background p-6 shadow-sm"
             >
               <div className="inline-flex rounded-full border border-border/70 bg-muted px-3 py-1 text-xs font-semibold">
@@ -544,4 +592,28 @@ function DonateCTA() {
       </Container>
     </MotionSection>
   );
+}
+
+function getNextPrayer(t: PrayerTimes["timings"]) {
+  const order: { key: keyof PrayerTimes["timings"]; label: string }[] = [
+    { key: "fajr", label: "Sabahu" },
+    { key: "dhuhr", label: "Dreka" },
+    { key: "asr", label: "Ikindia" },
+    { key: "maghrib", label: "Akshami" },
+    { key: "isha", label: "Jacia" },
+  ];
+
+  const now = new Date();
+
+  for (const item of order) {
+    const [h, m] = t[item.key].split(":").map((x) => parseInt(x, 10));
+    if (Number.isNaN(h) || Number.isNaN(m)) continue;
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target.getTime() > now.getTime()) {
+      return { label: item.label, iso: target.toISOString() };
+    }
+  }
+
+  return null;
 }

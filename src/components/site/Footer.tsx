@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Container } from "./Container";
 
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? "info@xhamia.com";
+const CONTACT_PHONE = process.env.CONTACT_PHONE ?? "043723623";
+
 export function Footer() {
   return (
     <footer className="border-t border-border/70 bg-background">
@@ -34,8 +37,15 @@ export function Footer() {
         <div className="space-y-3">
           <div className="text-sm font-semibold">Kontakt</div>
           <p className="text-sm text-muted-foreground">
-            Përditëso detajet në DB (Mosque info) kur të keni numër/email/linke.
+            Tel: {CONTACT_PHONE} <br />
+            Email: {CONTACT_EMAIL}
           </p>
+          <Link
+            href="/kontakt"
+            className="inline-flex h-9 items-center justify-center rounded-full border border-border/70 px-4 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          >
+            Shiko faqen e kontaktit
+          </Link>
         </div>
 
         <div className="md:col-span-3 border-t border-border/60 pt-6 text-xs text-muted-foreground">

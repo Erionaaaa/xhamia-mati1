@@ -8,9 +8,9 @@ import { MotionSection, MotionCard } from "@/components/site/motion";
 export default async function ActivityPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const a = await prisma.activity.findUnique({ where: { slug } });
   if (!a || !a.isActive) notFound();
 

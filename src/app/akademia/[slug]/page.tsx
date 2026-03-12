@@ -8,9 +8,9 @@ import { MotionSection, MotionCard } from "@/components/site/motion";
 export default async function AcademyPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await prisma.academyPost.findUnique({ where: { slug } });
   if (!post || !post.isActive) notFound();
 

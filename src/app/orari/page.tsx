@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/site/Container";
 import { getPrayerTimesForPrishtina } from "@/lib/prayer-times";
 import { MotionSection, MotionCard } from "@/components/site/motion";
+import { NextPrayerCountdown } from "@/components/site/NextPrayerCountdown";
 
 export const metadata = {
   title: "Orari i namazit — Xhamia Mati 1",
@@ -10,24 +11,30 @@ export const metadata = {
 export default async function PrayerTimesPage() {
   const data = await getPrayerTimesForPrishtina();
 
+  const next = getNextPrayer(data.timings);
+
   return (
     <main>
       <MotionSection>
         <Container className="py-12">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Orari i namazit
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Prishtinë • {data.dateLabel}
-              {data.timezone ? ` • ${data.timezone}` : ""}
-            </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">
+                Orari i namazit
+              </h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Prishtinë • {data.dateLabel}
+                {data.timezone ? ` • ${data.timezone}` : ""}
+              </p>
+              <NextPrayerCountdown
+                label={next?.label ?? "Namazi i radhës"}
+                targetIso={next?.iso ?? null}
+              />
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Burimi: shërbim publik (Aladhan)
+            </div>
           </div>
-          <div className="text-xs text-muted-foreground">
-            Burimi: shërbim publik (Aladhan)
-          </div>
-        </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -72,5 +79,36 @@ function TimeCard({ label, value }: { label: string; value: string }) {
       <div className="mt-2 text-3xl font-semibold tracking-tight">{value}</div>
     </MotionCard>
   );
+}
+
+function getNextPrayer(t: {
+  fajr: string;
+  sunrise: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+}) {
+  const order: { key: keyof typeof t; label: string }[] = [
+    { key: "fajr", label: "Sabahu" },
+    { key: "dhuhr", label: "Dreka" },
+    { key: "asr", label: "Ikindia" },
+    { key: "maghrib", label: "Akshami" },
+    { key: "isha", label: "Jacia" },
+  ];
+
+  const now = new Date();
+
+  for (const item of order) {
+    const [h, m] = t[item.key].split(":").map((x) => parseInt(x, 10));
+    if (Number.isNaN(h) || Number.isNaN(m)) continue;
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target.getTime() > now.getTime()) {
+      return { label: item.label, iso: target.toISOString() };
+    }
+  }
+
+  return null;
 }
 
